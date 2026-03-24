@@ -112,7 +112,7 @@ def get_city_bg_url(city_name: str) -> str:
         return CITY_BG_MAP[key]
     # Generic fallback via Unsplash search
     query = city_name.replace(" ", "%20")
-    return f"https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=1600&q=80&q={query},landmark,city"
+    return f"https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=1600&q=80&sig={query}"
 
 
 def set_city_background(city_name: str, overlay_opacity: float = 0.70, show_sketch: bool = True):
@@ -123,13 +123,12 @@ def set_city_background(city_name: str, overlay_opacity: float = 0.70, show_sket
     sketch_b64 = get_base64_image("assets/home_bg.png")
     
     o1 = overlay_opacity
-    o2 = min(overlay_opacity + 0.15, 0.95)
     
     sketch_css = ""
     if show_sketch:
         sketch_css = f"""
     /* Layer 2: The Blueprint Sketch (on top of photo) */
-    [data-testid="stAppViewContainer"]::after {{
+    .stApp::after {{
         content: "";
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
@@ -139,7 +138,7 @@ def set_city_background(city_name: str, overlay_opacity: float = 0.70, show_sket
         background-repeat: no-repeat;
         opacity: 0.15;
         pointer-events: none;
-        z-index: 1;
+        z-index: -1;
         mix-blend-mode: screen;
     }}
     """
@@ -147,41 +146,34 @@ def set_city_background(city_name: str, overlay_opacity: float = 0.70, show_sket
     css = f"""
     <style>
     /* Absolute base background for the entire app */
-    [data-testid="stAppViewContainer"] {{
+    .stApp {{
         background-color: var(--background-color) !important;
-        position: relative;
     }}
 
     /* Layer 1: The Landmark Photo (at the very bottom) */
-    [data-testid="stAppViewContainer"]::before {{
+    .stApp::before {{
         content: "";
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        background-image: 
-            linear-gradient(
-                color-mix(in srgb, var(--background-color), transparent {(1-o1)*100:.0f}%), 
-                color-mix(in srgb, var(--background-color), transparent {(1-o2)*100:.0f}%)
-            ),
-            url("{city_url}");
+        background-image: url("{city_url}");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
         background-repeat: no-repeat;
-        z-index: 0;
+        /* Use opacity to blend with the background-color of the container */
+        opacity: {1 - o1:.2f}; 
+        z-index: -2;
     }}
 
     {sketch_css}
 
     /* Force all intermediate Streamlit layers to be transparent */
-    [data-testid="stAppViewContainer"] > .main,
-    .main,
-    .main .block-container,
-    [data-testid="stHeader"] {{
+    [data-testid="stHeader"], .main, .block-container {{
+        background: transparent !important;
         background-color: transparent !important;
-        background-image: none !important;
     }}
     
-    /* Ensure content is above the background layers */
+    /* Ensure content is readable */
     .main > div {{
         position: relative;
         z-index: 10;
