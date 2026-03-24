@@ -128,7 +128,7 @@ elif st.session_state.view == "dashboard":
     st.markdown("""
     <style>
       [data-testid="stSidebarNav"] { display: none !important; }
-      [data-testid="stSidebar"] { background: var(--secondary-background-color); display: block !important; }
+      [data-testid="stSidebar"] { background: var(--secondary-background-color) !important; }
       [data-testid="collapsedControl"] { display: block !important; }
       .metric-card {
         background: var(--secondary-background-color); border-radius: 12px;

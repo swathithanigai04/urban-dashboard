@@ -173,10 +173,12 @@ def set_city_background(city_name: str, overlay_opacity: float = 0.70, show_sket
         background-color: transparent !important;
     }}
     
-    /* Ensure content is readable */
-    .main > div {{
-        position: relative;
-        z-index: 10;
+    /* Desktop-only layout adjustments to prevent mobile overlap */
+    @media (min-width: 992px) {{
+        .main > div {{
+            position: relative;
+            z-index: 10;
+        }}
     }}
     </style>
     """
