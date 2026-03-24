@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+
+# Streamlit
+.streamlit/
+
+# OS
+.DS_Store
+thumbs.db
+
+# Jupyter
+.ipynb_checkpoints
+
+# Project specific
+data/*.csv
+models/*.joblib
+models/*.pkl
+models/*.xgb
+models/*.h5
+assets/backgrounds/
