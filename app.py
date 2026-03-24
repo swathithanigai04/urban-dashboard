@@ -128,21 +128,22 @@ elif st.session_state.view == "dashboard":
     st.markdown("""
     <style>
       [data-testid="stSidebarNav"] { display: none !important; }
-      [data-testid="stSidebar"] { background: #0f1117; display: block !important; }
+      [data-testid="stSidebar"] { background: var(--secondary-background-color); display: block !important; }
       [data-testid="collapsedControl"] { display: block !important; }
       .metric-card {
-        background: #1e2130; border-radius: 12px;
+        background: var(--secondary-background-color); border-radius: 12px;
         padding: 16px 20px; margin-bottom: 10px;
-        border-left: 4px solid #4CAF50;
+        border-left: 4px solid var(--primary-color, #4CAF50);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       }
-      .metric-card h4 { margin: 0 0 4px 0; font-size: 13px; color: #aaa; }
-      .metric-card p  { margin: 0; font-size: 26px; font-weight: 700; color: #fff; }
+      .metric-card h4 { margin: 0 0 4px 0; font-size: 13px; color: var(--text-color); opacity: 0.7; }
+      .metric-card p  { margin: 0; font-size: 26px; font-weight: 700; color: var(--text-color); }
       .stButton > button {
-        width: 100%; background: #4CAF50; color: white;
+        width: 100%; background: var(--primary-color, #4CAF50); color: white;
         border: none; border-radius: 8px; padding: 10px;
         font-size: 15px; font-weight: 600;
       }
-      .stButton > button:hover { background: #388E3C; }
+      .stButton > button:hover { opacity: 0.9; }
     </style>
     """, unsafe_allow_html=True)
 

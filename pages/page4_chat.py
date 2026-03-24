@@ -98,7 +98,7 @@ def render():
         selected_city = st.selectbox("City context", cities_list, index=default_idx,
                                      key=f"chat_city_{session_city}")
     
-    set_city_background(selected_city)
+    # set_city_background(selected_city)  # Handled globally in app.py
     api_key = st.secrets.get("GEMINI_API_KEY", "")
 
     # ── Initialize chat history ───────────────────────────────────────────────

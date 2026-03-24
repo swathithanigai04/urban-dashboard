@@ -31,13 +31,13 @@ def unemp_color(val):
 
 def metric_card(label, value, unit="", color="#4CAF50", sublabel=""):
     st.markdown(
-        f"""<div style="background:#1e2130;border-radius:12px;padding:16px 18px;
-            margin-bottom:10px;border-left:4px solid {color}">
-            <div style="font-size:12px;color:#aaa;margin-bottom:4px">{label}</div>
-            <div style="font-size:24px;font-weight:700;color:#fff">
-                {value}<span style="font-size:13px;color:#aaa;margin-left:4px">{unit}</span>
+        f"""<div style="background: var(--secondary-background-color); border-radius:12px; padding:16px 18px;
+            margin-bottom:10px; border-left:4px solid {color}; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <div style="font-size:12px; color: var(--text-color); opacity: 0.7; margin-bottom:4px">{label}</div>
+            <div style="font-size:24px; font-weight:700; color: var(--text-color);">
+                {value}<span style="font-size:13px; opacity: 0.6; margin-left:4px">{unit}</span>
             </div>
-            {"<div style='font-size:11px;color:#666;margin-top:3px'>"+sublabel+"</div>" if sublabel else ""}
+            {"<div style='font-size:11px; opacity: 0.5; margin-top:3px'>"+sublabel+"</div>" if sublabel else ""}
         </div>""",
         unsafe_allow_html=True
     )
@@ -45,13 +45,13 @@ def metric_card(label, value, unit="", color="#4CAF50", sublabel=""):
 def score_ring(label, value, max_val=100, color="#4CAF50"):
     pct = value / max_val * 100
     st.markdown(
-        f"""<div style="background:#1e2130;border-radius:12px;padding:16px;
-            text-align:center;margin-bottom:10px">
-            <div style="font-size:11px;color:#aaa;margin-bottom:8px">{label}</div>
-            <div style="font-size:32px;font-weight:800;color:{color}">{value}</div>
-            <div style="font-size:11px;color:#555">/ {max_val}</div>
-            <div style="background:#333;border-radius:4px;height:5px;margin-top:8px">
-                <div style="background:{color};width:{pct}%;height:5px;border-radius:4px"></div>
+        f"""<div style="background: var(--secondary-background-color); border-radius:12px; padding:16px;
+            text-align:center; margin-bottom:10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <div style="font-size:11px; color: var(--text-color); opacity: 0.7; margin-bottom:8px">{label}</div>
+            <div style="font-size:32px; font-weight:800; color:{color}">{value}</div>
+            <div style="font-size:11px; opacity: 0.5;">/ {max_val}</div>
+            <div style="background: rgba(128,128,128,0.2); border-radius:4px; height:5px; margin-top:8px">
+                <div style="background:{color}; width:{pct}%; height:5px; border-radius:4px"></div>
             </div>
         </div>""",
         unsafe_allow_html=True
@@ -87,13 +87,12 @@ def salary_cost_chart(salary, cost_idx, city):
     ))
     fig.update_layout(
         barmode="group",
-        paper_bgcolor="#0f1117", plot_bgcolor="#111827",
-        font=dict(color="white"),
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         height=280,
         margin=dict(l=10, r=10, t=30, b=10),
-        legend=dict(font=dict(color="white"), orientation="h",
+        legend=dict(orientation="h",
                     yanchor="bottom", y=1.02, xanchor="right", x=1),
-        yaxis=dict(title="USD / month", gridcolor="#333"),
+        yaxis=dict(title="USD / month", gridcolor="#8885"),
     )
     return fig, savings
 
@@ -125,14 +124,13 @@ def industry_radar(row):
     fig.update_layout(
         polar=dict(
             radialaxis=dict(visible=True, range=[0,10],
-                            tickfont=dict(size=9, color="#aaa"),
-                            gridcolor="#333"),
-            angularaxis=dict(tickfont=dict(size=11, color="#ccc"),
-                             gridcolor="#333"),
-            bgcolor="#0f1117"
+                            tickfont=dict(size=9),
+                            gridcolor="#8885"),
+            angularaxis=dict(tickfont=dict(size=11),
+                             gridcolor="#8885"),
+            bgcolor="rgba(0,0,0,0)"
         ),
-        paper_bgcolor="#0f1117",
-        font=dict(color="white"),
+        paper_bgcolor="rgba(0,0,0,0)",
         showlegend=False,
         height=300,
         margin=dict(l=40, r=40, t=20, b=20)
@@ -155,11 +153,10 @@ def top_cities_chart(edf, metric, label, city, n=15):
     ))
     fig.update_layout(
         title=f"Top {n} cities — {label}",
-        paper_bgcolor="#0f1117", plot_bgcolor="#111827",
-        font=dict(color="white"),
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         height=420,
         margin=dict(l=10, r=60, t=45, b=10),
-        xaxis=dict(gridcolor="#333"),
+        xaxis=dict(gridcolor="#8885"),
         yaxis=dict(autorange="reversed")
     )
     return fig
@@ -189,79 +186,13 @@ def salary_scatter_map(edf, city):
         title="Global salary & affordability map"
     )
     fig.update_layout(
-        paper_bgcolor="#0f1117",
-        font=dict(color="white"),
+        paper_bgcolor="rgba(0,0,0,0)",
         height=420,
-        margin=dict(l=0, r=0, t=40, b=0),
-        coloraxis_colorbar=dict(title=dict(text="Affordability", font=dict(color="white")),
-                                tickfont=dict(color="white"))
+        margin=dict(l=0, r=0, t=40, b=0)
     )
     return fig
 
-# ── City background images ────────────────────────────────────────────────────
-# Curated landmark images for well-known cities (Unsplash source API or direct)
-CITY_BG_MAP = {
-    "dubai":        "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1400&q=80",
-    "abu dhabi":    "https://images.unsplash.com/photo-1607774451965-2a3b5c5a0a0a?w=1400&q=80",
-    "paris":        "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1400&q=80",
-    "new york":     "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1400&q=80",
-    "tokyo":        "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1400&q=80",
-    "london":       "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1400&q=80",
-    "singapore":    "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=1400&q=80",
-    "sydney":       "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=1400&q=80",
-    "mumbai":       "https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?w=1400&q=80",
-    "delhi":        "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=1400&q=80",
-    "bangalore":    "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=1400&q=80",
-    "chennai":      "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=1400&q=80",
-    "zurich":       "https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=1400&q=80",
-    "san francisco":"https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1400&q=80",
-    "seoul":        "https://images.unsplash.com/photo-1538485399081-7191377e8241?w=1400&q=80",
-    "bangkok":      "https://images.unsplash.com/photo-1508009603885-50cf31c453dd?w=1400&q=80",
-    "cairo":        "https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=1400&q=80",
-    "istanbul":     "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=1400&q=80",
-    "amsterdam":    "https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?w=1400&q=80",
-    "barcelona":    "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=1400&q=80",
-    "toronto":      "https://images.unsplash.com/photo-1517090504586-fde19ea6066f?w=1400&q=80",
-    "hong kong":    "https://images.unsplash.com/photo-1536599018102-9f803c140fc1?w=1400&q=80",
-    "busan":        "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=1400&q=80",
-    "kuala lumpur": "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=1400&q=80",
-    "doha":         "https://images.unsplash.com/photo-1545167496-58e8d9e0b413?w=1400&q=80",
-    "rio de janeiro":"https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=1400&q=80",
-    "cape town":    "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=1400&q=80",
-    "vienna":       "https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=1400&q=80",
-    "beijing":      "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=1400&q=80",
-    "shanghai":     "https://images.unsplash.com/photo-1538428494232-9c0d8a3ab403?w=1400&q=80",
-    "moscow":       "https://images.unsplash.com/photo-1513326738677-b964603b136d?w=1400&q=80",
-    "rome":         "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1400&q=80",
-}
-
-def get_city_bg_url(city_name: str) -> str:
-    """Return a landmark image URL for the city, falling back to Unsplash search."""
-    key = city_name.lower().strip()
-    if key in CITY_BG_MAP:
-        return CITY_BG_MAP[key]
-    # Fallback: Unsplash search by city name + landmark
-    query = city_name.replace(" ", "%20")
-    return f"https://source.unsplash.com/1400x900/?{query},landmark,skyline"
-
-def set_city_background(city_name: str):
-    """Inject CSS to set a city landmark as page background with dark overlay."""
-    url = get_city_bg_url(city_name)
-    st.markdown(
-        f"""
-        <style>
-        .stApp {{
-            background-image:
-                linear-gradient(rgba(10,12,20,0.72) 0%, rgba(10,12,20,0.90) 100%),
-                url("{url}");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+# Redundant background logic removed (handled globally in app.py)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MAIN RENDER
@@ -343,20 +274,20 @@ def render():
     uc = unemp_color(float(row["unemployment_rate"]))
 
     st.markdown(
-        f"""<div style="background:#1e2130;border-radius:14px;padding:18px 22px;
-            margin-bottom:16px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+        f"""<div style="background: var(--secondary-background-color); border-radius:14px; padding:18px 22px;
+            margin-bottom:16px; display:flex; align-items:center; gap:24px; flex-wrap:wrap; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
             <div style="text-align:center">
-                <div style="font-size:12px;color:#aaa">Job Market Grade</div>
-                <div style="font-size:56px;font-weight:900;color:{jc};line-height:1">{jg}</div>
+                <div style="font-size:12px; color: var(--text-color); opacity: 0.7;">Job Market Grade</div>
+                <div style="font-size:56px; font-weight:900; color:{jc}; line-height:1">{jg}</div>
             </div>
-            <div style="flex:1;min-width:200px">
-                <div style="font-size:13px;color:#ccc;margin-bottom:6px">
+            <div style="flex:1; min-width:200px">
+                <div style="font-size:13px; color: var(--text-color); margin-bottom:6px">
                     <b>Job Market Score:</b> {row['job_market_score']}/100 &nbsp;|&nbsp;
                     <b>GDP/capita:</b> ${int(row['gdp_per_capita_usd']):,} &nbsp;|&nbsp;
                     <b>Unemployment:</b>
                     <span style="color:{uc}">{row['unemployment_rate']}%</span>
                 </div>
-                <div style="font-size:13px;color:#ccc">
+                <div style="font-size:13px; color: var(--text-color); opacity: 0.8;">
                     <b>Tech Hub Score:</b> {row['tech_hub_score']}/10 &nbsp;|&nbsp;
                     <b>Industry Diversity:</b> {row['industry_diversity_score']}/10 &nbsp;|&nbsp;
                     <b>Affordability:</b> {row['affordability_score']}/100
@@ -403,13 +334,13 @@ def render():
         sav_col = "#4CAF50" if savings > 0 else "#F44336"
         sav_label = "monthly savings" if savings > 0 else "monthly deficit"
         st.markdown(
-            f"""<div style="background:#1e2130;border-radius:10px;padding:12px 16px;
-                text-align:center;border:1px solid {'#4CAF50' if savings>0 else '#F44336'}22">
-                <span style="color:#aaa;font-size:13px">Estimated </span>
-                <span style="color:{sav_col};font-size:20px;font-weight:700">
+            f"""<div style="background: var(--secondary-background-color); border-radius:10px; padding:12px 16px;
+                text-align:center; border:1px solid {'rgba(76,175,80,0.2)' if savings>0 else 'rgba(244,67,54,0.2)'}">
+                <span style="color: var(--text-color); opacity: 0.7; font-size:13px">Estimated </span>
+                <span style="color:{sav_col}; font-size:20px; font-weight:700">
                     {'+'if savings>0 else ''}${savings:,.0f}
                 </span>
-                <span style="color:#aaa;font-size:13px"> {sav_label}</span>
+                <span style="color: var(--text-color); opacity: 0.7; font-size:13px"> {sav_label}</span>
             </div>""",
             unsafe_allow_html=True
         )
@@ -427,16 +358,16 @@ def render():
         for item, val in cost_items.items():
             pct = val / total_cost * 100
             st.markdown(
-                f"""<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
-                    <div style="font-size:13px;color:#aaa;width:140px">{item}</div>
-                    <div style="flex:1;background:#333;border-radius:3px;height:16px">
-                        <div style="background:#2196F3;width:{pct}%;height:16px;
-                            border-radius:3px;display:flex;align-items:center;
+                f"""<div style="display:flex; align-items:center; gap:8px; margin-bottom:5px">
+                    <div style="font-size:13px; color: var(--text-color); opacity: 0.7; width:140px">{item}</div>
+                    <div style="flex:1; background: rgba(128,128,128,0.2); border-radius:3px; height:16px">
+                        <div style="background:#2196F3; width:{pct}%; height:16px;
+                            border-radius:3px; display:flex; align-items:center;
                             padding-left:6px">
-                            <span style="font-size:11px;color:#fff">${val:,.0f}</span>
+                            <span style="font-size:11px; color:#fff">${val:,.0f}</span>
                         </div>
                     </div>
-                    <div style="font-size:11px;color:#666;width:36px">{pct:.0f}%</div>
+                    <div style="font-size:11px; color: var(--text-color); opacity: 0.5; width:36px">{pct:.0f}%</div>
                 </div>""",
                 unsafe_allow_html=True
             )
@@ -493,10 +424,10 @@ def render():
         ))
         fig_u.update_layout(
             title="15 cities with lowest unemployment",
-            paper_bgcolor="#0f1117", plot_bgcolor="#111827",
-            font=dict(color="white"), height=420,
+            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+            height=420,
             margin=dict(l=10,r=60,t=45,b=10),
-            xaxis=dict(gridcolor="#333",title="Unemployment %"),
+            xaxis=dict(gridcolor="#8885",title="Unemployment %"),
             yaxis=dict(autorange="reversed")
         )
         st.plotly_chart(fig_u, use_container_width=True)
@@ -538,13 +469,13 @@ def render():
             st.markdown(f"- {p}")
     with col_score:
         st.markdown(
-            f"""<div style="background:#1e2130;border-radius:14px;padding:20px;
-                text-align:center">
-                <div style="font-size:13px;color:#aaa">Opportunity Score</div>
-                <div style="font-size:60px;font-weight:900;color:{oc};
+            f"""<div style="background: var(--secondary-background-color); border-radius:14px; padding:20px;
+                text-align:center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                <div style="font-size:13px; color: var(--text-color); opacity: 0.7;">Opportunity Score</div>
+                <div style="font-size:60px; font-weight:900; color:{oc};
                     line-height:1.1">{og}</div>
-                <div style="font-size:26px;color:#ddd">{opportunity_score:.1f}/100</div>
-                <div style="font-size:12px;color:#666;margin-top:6px">{city}</div>
+                <div style="font-size:26px; color: var(--text-color); opacity: 0.9;">{opportunity_score:.1f}/100</div>
+                <div style="font-size:12px; color: var(--text-color); opacity: 0.5; margin-top:6px">{city}</div>
             </div>""",
             unsafe_allow_html=True
         )

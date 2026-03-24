@@ -13,7 +13,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 import pickle, os
 from utils.helpers import load_data, compute_extended_metrics, grade
-from utils.city_background import set_city_background
+# from utils.city_background import set_city_background  <-- Handle globally in app.py
 
 FEATURES = ["NDVI", "NDBI", "Rainfall", "Temperature", "AQI"]
 URBAN_LABELS = {0: "Low", 1: "Medium", 2: "High"}
@@ -121,10 +121,9 @@ def forecast_chart(current_livability, city_name, xgb_m, rf_aqi, rf_urb, scaler,
                   annotation_font_color="#FFC107")
     fig.update_layout(
         title=f"Livability Forecast (2024–2035) — {city_name}",
-        paper_bgcolor="#0f1117", plot_bgcolor="#111827",
-        font=dict(color="white"),
-        xaxis=dict(title="Year", gridcolor="#333"),
-        yaxis=dict(title="Livability Score", gridcolor="#333"),
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        xaxis=dict(title="Year", gridcolor="#8885"),
+        yaxis=dict(title="Livability Score", gridcolor="#8885"),
         height=320, margin=dict(l=20, r=20, t=45, b=20)
     )
     return fig, livability_vals
@@ -138,8 +137,8 @@ def importance_chart(xgb_m):
         title="Feature Importance — Livability Model"
     )
     fig.update_layout(
-        paper_bgcolor="#0f1117", plot_bgcolor="#111827",
-        font=dict(color="white"), showlegend=False,
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        showlegend=False,
         height=280, margin=dict(l=20, r=20, t=45, b=20),
         coloraxis_showscale=False
     )
@@ -238,8 +237,7 @@ def render():
             title="Land Cover Distribution: 10 Years Ago → Today → Future Estimate",
             barmode='group',
             yaxis_title="Land Area (%)",
-            paper_bgcolor="#0f1117", plot_bgcolor="#111827",
-            font=dict(color="white"),
+            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
             height=380,
             margin=dict(l=20, r=20, t=45, b=20),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
@@ -321,8 +319,8 @@ def render():
                                 marker_color=delta_col))
         fig_wi.update_layout(
             barmode="group", height=260,
-            paper_bgcolor="#0f1117", plot_bgcolor="#111827",
-            font=dict(color="white"), margin=dict(l=20,r=20,t=20,b=20)
+            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+            margin=dict(l=20,r=20,t=20,b=20)
         )
         st.plotly_chart(fig_wi, use_container_width=True)
 
@@ -347,11 +345,11 @@ def render():
 
             with cols[i]:
                 st.markdown(
-                    f"""<div style="background:#1a1c2c; border:1px solid #30363d; border-radius:12px;
-                        padding:20px; text-align:center; height:180px; display:flex; flex-direction:column; justify-content:center;">
-                        <div style="font-size:13px; color:#8b949e; margin-bottom:10px; font-weight:500;">{label}</div>
+                    f"""<div style="background: var(--secondary-background-color); border:1px solid rgba(128,128,128,0.2); border-radius:12px;
+                        padding:20px; text-align:center; height:180px; display:flex; flex-direction:column; justify-content:center; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                        <div style="font-size:13px; color: var(--text-color); opacity: 0.7; margin-bottom:10px; font-weight:500;">{label}</div>
                         <div style="font-size:32px; font-weight:800; color:{gc}; margin:10px 0;">{g}</div>
-                        <div style="font-size:12px; color:#484f58; margin-top:5px;">{unit}</div>
+                        <div style="font-size:12px; color: var(--text-color); opacity: 0.5; margin-top:5px;">{unit}</div>
                     </div>""",
                     unsafe_allow_html=True
                 )

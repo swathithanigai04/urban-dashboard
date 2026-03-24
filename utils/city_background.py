@@ -148,7 +148,7 @@ def set_city_background(city_name: str, overlay_opacity: float = 0.70, show_sket
     <style>
     /* Absolute base background for the entire app */
     [data-testid="stAppViewContainer"] {{
-        background-color: #06090f !important;
+        background-color: var(--background-color) !important;
         position: relative;
     }}
 
@@ -158,7 +158,10 @@ def set_city_background(city_name: str, overlay_opacity: float = 0.70, show_sket
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
         background-image: 
-            linear-gradient(rgba(10,12,20,{o1}), rgba(10,12,20,{o2})),
+            linear-gradient(
+                color-mix(in srgb, var(--background-color), transparent {(1-o1)*100:.0f}%), 
+                color-mix(in srgb, var(--background-color), transparent {(1-o2)*100:.0f}%)
+            ),
             url("{city_url}");
         background-size: cover;
         background-position: center;

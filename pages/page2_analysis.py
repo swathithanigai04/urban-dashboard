@@ -24,9 +24,9 @@ def metric_card(label, value, unit="", colour="#4CAF50", help_text=""):
     title_attr = f' title="{help_text}"' if help_text else ""
     label_style = ' style="border-bottom: 1px dotted #888; cursor: help;"' if help_text else ""
     st.markdown(
-        f"""<div class="metric-card" style="border-left-color:{colour}"{title_attr}>
-              <h4{label_style}>{label}</h4>
-              <p>{value} <span style="font-size:14px;color:#aaa">{unit}</span></p>
+        f"""<div class="metric-card" style="border-left-color:{colour}; background: var(--secondary-background-color); color: var(--text-color);" {title_attr}>
+              <h4{label_style} style="color: var(--text-color); opacity: 0.7;">{label}</h4>
+              <p style="color: var(--text-color);">{value} <span style="font-size:14px; opacity: 0.6;">{unit}</span></p>
             </div>""",
         unsafe_allow_html=True
     )
@@ -56,14 +56,12 @@ def radar_chart(metrics_dict, city_name):
     fig.update_layout(
         polar=dict(
             radialaxis=dict(visible=True, range=[0, 100],
-                            tickfont=dict(size=10, color="#aaa"),
-                            gridcolor="#333"),
-            angularaxis=dict(tickfont=dict(size=11, color="#ccc"),
-                             gridcolor="#333"),
-            bgcolor="#0f1117"
+                            tickfont=dict(size=10),
+                            gridcolor="#8885"),
+            angularaxis=dict(tickfont=dict(size=11)),
+            bgcolor="rgba(0,0,0,0)"
         ),
-        paper_bgcolor="#0f1117", plot_bgcolor="#0f1117",
-        font=dict(color="white"),
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         showlegend=False,
         margin=dict(l=50, r=50, t=30, b=30),
         height=320
@@ -79,8 +77,8 @@ def sparkline(df, metric, city_name):
                  color=colors, color_discrete_map="identity",
                  title=f"Top 15 cities — {metric}")
     fig.update_layout(
-        paper_bgcolor="#0f1117", plot_bgcolor="#0f1117",
-        font=dict(color="white"), showlegend=False,
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        showlegend=False,
         margin=dict(l=20, r=20, t=40, b=80),
         height=280,
         xaxis=dict(tickangle=-45, tickfont=dict(size=9)),
@@ -141,11 +139,11 @@ def render():
         aq_label, aq_col = aqi_label(m1["AQI"])
 
         st.markdown(
-            f"""<div style="background:#1e2130;border-radius:12px;padding:16px;
-                margin-bottom:14px;text-align:center;">
-            <div style="font-size:13px;color:#aaa;margin-bottom:4px">City Health Score</div>
+            f"""<div style="background:var(--secondary-background-color);border-radius:12px;padding:16px;
+                margin-bottom:14px;text-align:center;box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div style="font-size:13px;color:var(--text-color);opacity:0.7;margin-bottom:4px">City Health Score</div>
             <div style="font-size:52px;font-weight:800;color:#4CAF50">{health}</div>
-            <div style="font-size:14px;color:#aaa">/100</div>
+            <div style="font-size:14px;color:var(--text-color);opacity:0.6">/100</div>
             <span style="background:{gc};color:#fff;padding:3px 14px;
                 border-radius:20px;font-weight:700;margin-top:8px;display:inline-block">
                 Grade {g}</span>
@@ -174,9 +172,9 @@ def render():
             unsafe_allow_html=True
         )
         st.markdown(
-            f"""<div class="metric-card" style="border-left-color:#9C27B0" title="Overall score out of 100 estimating quality of life based on environmental and urban factors.">
-                <h4 style="border-bottom: 1px dotted #888; cursor: help;">🏡 Livability Score</h4>
-                <p>{m1['Livability']:.2f} <span style="font-size:14px;color:#aaa">/100</span>
+            f"""<div class="metric-card" style="border-left-color:#9C27B0; background: var(--secondary-background-color); color: var(--text-color);" title="Overall score out of 100 estimating quality of life based on environmental and urban factors.">
+                <h4 style="border-bottom: 1px dotted #888; cursor: help; color: var(--text-color); opacity: 0.7;">🏡 Livability Score</h4>
+                <p style="color: var(--text-color);">{m1['Livability']:.2f} <span style="font-size:14px; opacity: 0.6;">/100</span>
                 </p></div>""",
             unsafe_allow_html=True
         )
@@ -247,11 +245,9 @@ def render():
                              marker_color="#F44336"))
         fig.update_layout(
             barmode="group",
-            paper_bgcolor="#0f1117", plot_bgcolor="#0f1117",
-            font=dict(color="white"),
+            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
             height=350,
-            margin=dict(l=20, r=20, t=20, b=40),
-            legend=dict(font=dict(color="white"))
+            margin=dict(l=20, r=20, t=20, b=40)
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -296,7 +292,7 @@ def render():
             title="Temperature vs NDVI (bubble size = Rainfall)"
         )
         fig2.update_layout(
-            paper_bgcolor="#0f1117", plot_bgcolor="#111827",
-            font=dict(color="white"), height=380
+            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+            height=380
         )
         st.plotly_chart(fig2, use_container_width=True)

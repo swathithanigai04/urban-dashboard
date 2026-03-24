@@ -17,9 +17,4 @@ thumbs.db
 .ipynb_checkpoints
 
 # Project specific
-data/*.csv
-models/*.joblib
-models/*.pkl
-models/*.xgb
-models/*.h5
 assets/backgrounds/
