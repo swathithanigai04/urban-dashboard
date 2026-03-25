@@ -92,7 +92,7 @@ def salary_cost_chart(salary, cost_idx, city):
         margin=dict(l=10, r=10, t=30, b=10),
         legend=dict(orientation="h",
                     yanchor="bottom", y=1.02, xanchor="right", x=1),
-        yaxis=dict(title="USD / month", gridcolor="#8885"),
+        yaxis=dict(title=dict(text="USD / month"), gridcolor="#444444"),
     )
     return fig, savings
 
@@ -125,9 +125,9 @@ def industry_radar(row):
         polar=dict(
             radialaxis=dict(visible=True, range=[0,10],
                             tickfont=dict(size=9),
-                            gridcolor="#8885"),
+                            gridcolor="#444444"),
             angularaxis=dict(tickfont=dict(size=11),
-                             gridcolor="#8885"),
+                             gridcolor="#444444"),
             bgcolor="rgba(0,0,0,0)"
         ),
         paper_bgcolor="rgba(0,0,0,0)",
@@ -156,7 +156,7 @@ def top_cities_chart(edf, metric, label, city, n=15):
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         height=420,
         margin=dict(l=10, r=60, t=45, b=10),
-        xaxis=dict(gridcolor="#8885"),
+        xaxis=dict(gridcolor="#444444"),
         yaxis=dict(autorange="reversed")
     )
     return fig
@@ -427,7 +427,7 @@ def render():
             paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
             height=420,
             margin=dict(l=10,r=60,t=45,b=10),
-            xaxis=dict(gridcolor="#8885",title="Unemployment %"),
+            xaxis=dict(gridcolor="#444444", title=dict(text="Unemployment %")),
             yaxis=dict(autorange="reversed")
         )
         st.plotly_chart(fig_u, use_container_width=True)

@@ -57,7 +57,7 @@ def radar_chart(metrics_dict, city_name):
         polar=dict(
             radialaxis=dict(visible=True, range=[0, 100],
                             tickfont=dict(size=10),
-                            gridcolor="#8885"),
+                            gridcolor="#444444"),
             angularaxis=dict(tickfont=dict(size=11)),
             bgcolor="rgba(0,0,0,0)"
         ),
