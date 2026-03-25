@@ -120,10 +120,12 @@ def forecast_chart(current_livability, city_name, xgb_m, rf_aqi, rf_urb, scaler,
                   line_color="#FFC107", annotation_text="Current",
                   annotation_font_color="#FFC107")
     fig.update_layout(
-        title=f"Livability Forecast (2024–2035) — {city_name}",
+        title=f"Livability Forecast (2024-2035) - {city_name}",
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        xaxis=dict(title=dict(text="Year"), gridcolor="#444444"),
-        yaxis=dict(title=dict(text="Livability Score"), gridcolor="#444444"),
+        xaxis_title="Year",
+        yaxis_title="Livability Score",
+        xaxis=dict(gridcolor="#444444"),
+        yaxis=dict(gridcolor="#444444"),
         height=320, margin=dict(l=20, r=20, t=45, b=20)
     )
     return fig, livability_vals
