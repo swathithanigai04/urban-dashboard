@@ -10,24 +10,33 @@ from streamlit_folium import st_folium
 from utils.helpers import load_data
 # from utils.city_background import set_city_background  <-- REMOVED
 
-import geopy.geocoders
-from geopy.geocoders import Nominatim
+from geopy.geocoders import Nominatim, Photon
 from geopy.exc import GeopyError
 
-# ── Geocoding (using geopy for better reliability) ────────────────────────────
+# ── Geocoding (using geopy with fallback strategy) ────────────────────────────
 def geocode(place_name: str):
-    # Unique user-agent to avoid shared block list issues on Streamlit Cloud
-    user_agent = f"JatayuX_Urban_Dashboard_v1_{hash(place_name) % 10000}"
-    geolocator = Nominatim(user_agent=user_agent, timeout=10)
-    
+    """
+    Tries multiple geocoders to ensure reliability on public cloud environments.
+    """
+    # 1. Try Nominatim (OSM)
+    user_agent = f"JatayuX_Spatial_App_{hash(place_name) % 10000}"
     try:
+        geolocator = Nominatim(user_agent=user_agent, timeout=6)
         location = geolocator.geocode(place_name)
         if location:
             return location.latitude, location.longitude, location.address
+    except:
+        pass # Silently fail to try next geocoder
+
+    # 2. Try Photon (Alternative OSM-based geocoder, often less restrictive)
+    try:
+        photon = Photon(user_agent=user_agent, timeout=6)
+        location = photon.geocode(place_name)
+        if location:
+            return location.latitude, location.longitude, location.address
     except (GeopyError, Exception) as e:
-        # We store the error in session state instead of just calling st.error,
-        # so calling functions can decide how to display it.
         st.session_state["search_error"] = f"Geocoding error: {e}"
+        
     return None, None, None
 
 # ── Match city in our dataset ─────────────────────────────────────────────────
