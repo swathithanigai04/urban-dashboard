@@ -27,7 +27,9 @@ if "view" not in st.session_state or st.session_state.view not in ["home", "dash
 df = load_data()
 
 def search_location(place):
-    lat, lon, display_name = geocode(place)
+    with st.spinner(f"📡 Locating '{place}'..."):
+        lat, lon, display_name = geocode(place)
+        
     if lat is not None:
         match = find_in_dataset(place, df)
         
@@ -56,6 +58,10 @@ def search_location(place):
         # Immediately jump to Place Search (Page 1) after a global search
         st.session_state.view = "dashboard"
         st.session_state.dashboard_page = "Place Search"
+    else:
+        # If lat is None, geocode() should have set st.session_state["search_error"]
+        if "search_error" not in st.session_state or not st.session_state["search_error"]:
+            st.session_state["search_error"] = f"Could not find coordinates for '{place}'. Please try a more specific name."
 
 if st.session_state.view == "home":
     # Custom CSS for dark mode JatayuX theme ONLY on home page
@@ -98,6 +104,11 @@ if st.session_state.view == "home":
     st.markdown('<div class="hero-title">JatayuX</div>', unsafe_allow_html=True)
     st.markdown('<div class="hero-subtitle">Spatial Intelligence for Earth\'s Data</div>', unsafe_allow_html=True)
     
+    if st.session_state.get("search_error"):
+        st.error(st.session_state["search_error"])
+        # Clear it so it doesn't persist forever if we click something else
+        st.session_state["search_error"] = None
+
     col1, col2, col3 = st.columns([1.5, 3, 1.5])
     with col2:
         query = st.chat_input("Ask anything or mention a location...", key="home_search")

@@ -10,21 +10,24 @@ from streamlit_folium import st_folium
 from utils.helpers import load_data
 # from utils.city_background import set_city_background  <-- REMOVED
 
-# ── Geocoding (free Nominatim, no API key needed) ────────────────────────────
+import geopy.geocoders
+from geopy.geocoders import Nominatim
+from geopy.exc import GeopyError
+
+# ── Geocoding (using geopy for better reliability) ────────────────────────────
 def geocode(place_name: str):
-    url = "https://nominatim.openstreetmap.org/search"
-    params = {"q": place_name, "format": "json", "limit": 1}
-    headers = {"User-Agent": "UrbanDashboard/1.0"}
+    # Unique user-agent to avoid shared block list issues on Streamlit Cloud
+    user_agent = f"JatayuX_Urban_Dashboard_v1_{hash(place_name) % 10000}"
+    geolocator = Nominatim(user_agent=user_agent, timeout=10)
+    
     try:
-        r = requests.get(url, params=params, headers=headers, timeout=8)
-        results = r.json()
-        if results:
-            lat = float(results[0]["lat"])
-            lon = float(results[0]["lon"])
-            display_name = results[0]["display_name"]
-            return lat, lon, display_name
-    except Exception as e:
-        st.error(f"Geocoding error: {e}")
+        location = geolocator.geocode(place_name)
+        if location:
+            return location.latitude, location.longitude, location.address
+    except (GeopyError, Exception) as e:
+        # We store the error in session state instead of just calling st.error,
+        # so calling functions can decide how to display it.
+        st.session_state["search_error"] = f"Geocoding error: {e}"
     return None, None, None
 
 # ── Match city in our dataset ─────────────────────────────────────────────────
