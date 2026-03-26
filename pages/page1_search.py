@@ -10,7 +10,7 @@ from streamlit_folium import st_folium
 from utils.helpers import load_data
 # from utils.city_background import set_city_background  <-- REMOVED
 
-from geopy.geocoders import Nominatim, Photon, ArcGIS
+from geopy.geocoders import Nominatim, Photon, ArcGIS, GoogleV3
 from geopy.exc import GeopyError
 
 # ── Geocoding (using geopy with multi-provider fallback) ──────────────────────
@@ -19,8 +19,20 @@ def geocode(place_name: str):
     Tries multiple geocoding providers to ensure reliability.
     """
     user_agent = f"JatayuX_Spatial_App_{hash(place_name) % 10000}"
+    last_error = "All providers returned no results."
     
-    # 1. Try ArcGIS (Often the most reliable on public clouds, no API key needed for basic search)
+    # 1. Try Google Maps (Most reliable - if key is available)
+    google_key = st.secrets.get("GOOGLE_MAPS_KEY", "")
+    if google_key:
+        try:
+            google = GoogleV3(api_key=google_key, timeout=8)
+            location = google.geocode(place_name)
+            if location:
+                return location.latitude, location.longitude, location.address
+        except Exception as e:
+            last_error = f"GoogleMaps error: {e}"
+
+    # 2. Try ArcGIS (Reliable backup)
     try:
         arcgis = ArcGIS(timeout=10)
         location = arcgis.geocode(place_name)
@@ -29,7 +41,7 @@ def geocode(place_name: str):
     except Exception as e:
         last_error = f"ArcGIS error: {e}"
 
-    # 2. Try Nominatim (OSM)
+    # 3. Try Nominatim (OSM)
     try:
         geolocator = Nominatim(user_agent=user_agent, timeout=6)
         location = geolocator.geocode(place_name)
@@ -38,7 +50,7 @@ def geocode(place_name: str):
     except Exception as e:
         last_error = f"Nominatim error: {e}"
 
-    # 3. Try Photon (OSM-based)
+    # 4. Try Photon (OSM-based)
     try:
         photon = Photon(user_agent=user_agent, timeout=6)
         location = photon.geocode(place_name)
