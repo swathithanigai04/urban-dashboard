@@ -10,33 +10,45 @@ from streamlit_folium import st_folium
 from utils.helpers import load_data
 # from utils.city_background import set_city_background  <-- REMOVED
 
-from geopy.geocoders import Nominatim, Photon
+from geopy.geocoders import Nominatim, Photon, ArcGIS
 from geopy.exc import GeopyError
 
-# ── Geocoding (using geopy with fallback strategy) ────────────────────────────
+# ── Geocoding (using geopy with multi-provider fallback) ──────────────────────
 def geocode(place_name: str):
     """
-    Tries multiple geocoders to ensure reliability on public cloud environments.
+    Tries multiple geocoding providers to ensure reliability.
     """
-    # 1. Try Nominatim (OSM)
     user_agent = f"JatayuX_Spatial_App_{hash(place_name) % 10000}"
+    
+    # 1. Try ArcGIS (Often the most reliable on public clouds, no API key needed for basic search)
+    try:
+        arcgis = ArcGIS(timeout=10)
+        location = arcgis.geocode(place_name)
+        if location:
+            return location.latitude, location.longitude, location.address
+    except Exception as e:
+        last_error = f"ArcGIS error: {e}"
+
+    # 2. Try Nominatim (OSM)
     try:
         geolocator = Nominatim(user_agent=user_agent, timeout=6)
         location = geolocator.geocode(place_name)
         if location:
             return location.latitude, location.longitude, location.address
-    except:
-        pass # Silently fail to try next geocoder
+    except Exception as e:
+        last_error = f"Nominatim error: {e}"
 
-    # 2. Try Photon (Alternative OSM-based geocoder, often less restrictive)
+    # 3. Try Photon (OSM-based)
     try:
         photon = Photon(user_agent=user_agent, timeout=6)
         location = photon.geocode(place_name)
         if location:
             return location.latitude, location.longitude, location.address
-    except (GeopyError, Exception) as e:
-        st.session_state["search_error"] = f"Geocoding error: {e}"
-        
+    except Exception as e:
+        last_error = f"Photon error: {e}"
+
+    # If all fail, show the last specific error for diagnostics
+    st.session_state["search_error"] = f"Geocoding failed for '{place_name}'. {last_error}"
     return None, None, None
 
 # ── Match city in our dataset ─────────────────────────────────────────────────
