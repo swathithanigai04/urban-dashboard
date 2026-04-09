@@ -55,17 +55,20 @@ def mock_gemini_response(user_input, city_name, df_row):
     import time
     time.sleep(1.0) # simulate typing
     m = compute_extended_metrics(df_row)
+    econ = get_economic_data(city_name)
     q = user_input.lower()
     
     if "livability" in q:
         status = "strong" if m['Livability'] > 60 else "moderate" if m['Livability'] > 40 else "vulnerable"
-        return f"**{city_name}'s livability score of {m['Livability']:.1f}/100** is considered **{status}**.\n\nThis is primarily driven by its local environmental conditions. For instance, the **NDVI (Vegetation) is {m['NDVI']:.3f}**, offering {'plenty of green spaces' if m['NDVI'] > 0.3 else 'highly limited green cover'}. The **Air Quality Index is categorized at {int(m['AQI'])}/5**, which plays a major part in public health outcomes. Furthermore, local Heat stress sits at {m['Heat Stress (0-10)']:.1f}/10, directly affecting daily comfort for residents."
+        return f"**{city_name}'s livability score of {m['Livability']:.1f}/100** is considered **{status}**.\n\nThis is primarily driven by its local environmental conditions. For instance, the **NDVI (Vegetation) is {m['NDVI']:.3f}**, offering {'plenty of green spaces' if m['NDVI'] > 0.3 else 'highly limited green cover'}. The **Air Quality Index is categorized at {int(m['AQI'])}/5**, which plays a major part in public health outcomes. Furthermore, local Heat stress sits at {m['Heat Stress (0-10)'].iloc[0] if hasattr(m['Heat Stress (0-10)'], 'iloc') else m['Heat Stress (0-10)']:.1f}/10, directly affecting daily comfort for residents."
     
     if "top 3" in q or "risk" in q:
         risks = []
         if m['AQI'] > 2: risks.append(f"**Air Quality ({int(m['AQI'])}/5):** Harmful levels of pollution due to urban emissions.")
-        if m['Heat Stress (0-10)'] > 4.5: risks.append(f"**Heat Stress ({m['Heat Stress (0-10)']:.1f}/10):** Elevated Urban Heat Island effect driven by {m['Land Surface Temp']:.1f}°C surface temperatures.")
-        if m['Flood Risk (0-10)'] > 4: risks.append(f"**Flood Vulnerability ({m['Flood Risk (0-10)']:.1f}/10):** Heavy annualized rainfall combined with high built-up index ({m['NDBI']:.3f}) reduces natural drainage.")
+        heat_val = m['Heat Stress (0-10)'].iloc[0] if hasattr(m['Heat Stress (0-10)'], 'iloc') else m['Heat Stress (0-10)']
+        if heat_val > 4.5: risks.append(f"**Heat Stress ({heat_val:.1f}/10):** Elevated Urban Heat Island effect driven by {m['Land Surface Temp']:.1f}°C surface temperatures.")
+        flood_val = m['Flood Risk (0-10)'].iloc[0] if hasattr(m['Flood Risk (0-10)'], 'iloc') else m['Flood Risk (0-10)']
+        if flood_val > 4: risks.append(f"**Flood Vulnerability ({flood_val:.1f}/10):** Heavy annualized rainfall combined with high built-up index ({m['NDBI']:.3f}) reduces natural drainage.")
         if m['NDVI'] < 0.25: risks.append(f"**Deforestation (NDVI {m['NDVI']:.3f}):** Critically low natural vegetation cover limits carbon capture.")
         
         if len(risks) == 0:
@@ -73,13 +76,25 @@ def mock_gemini_response(user_input, city_name, df_row):
         else:
             return f"Based on the live spatial metrics for **{city_name}**, the top environmental risks are:\n\n* " + "\n* ".join(risks[:3])
             
+    if "rent" in q or "cost" in q or "expensive" in q or "pay" in q:
+        rent = econ.get('rent_1bhk_usd', 0)
+        salary = econ.get('avg_monthly_salary_usd', 0)
+        afford = econ.get('affordability_score', 0)
+        return f"*(Offline AI Simulation Mode)*\n\nIn **{city_name}**, the average rent for a 1BHK is approximately **${rent:,} USD**. \n\nWith an average monthly salary of **${salary:,} USD**, the city has an **affordability score of {afford:.1f}/100**. {'This suggests a relatively high cost of living compared to local wages.' if afford < 50 else 'This indicates a fairly balanced relationship between income and living expenses.'}"
+
+    if "salary" in q or "income" in q or "earn" in q:
+        salary = econ.get('avg_monthly_salary_usd', 0)
+        jobs = econ.get('job_market_score', 0)
+        return f"*(Offline AI Simulation Mode)*\n\nThe average monthly salary in **{city_name}** is **${salary:,} USD**. \n\nThe overall job market score is **{jobs:.1f}/100**, which accounts for technology hub presence, industry diversity, and local unemployment rates."
+
     if "ndvi" in q or "green" in q:
         return f"To improve its NDVI ({m['NDVI']:.3f}), **{city_name}** must focus on rigorous urban afforestation. Since the NDBI (built-up area) is at {m['NDBI']:.3f}, the city has heavily prioritized concrete infrastructure over its natural canopy. \n\nImplementing rooftop gardens, vertical greenery, and converting unused paved zones into micro-parks can significantly boost the overall green cover ({m['Green Cover (%)']:.1f}%) and lower the {m['Land Surface Temp']:.1f}°C surface heat."
         
     if "continue" in q or "happen" in q or "urbanization" in q:
-        return f"If **{city_name}** continues its current urbanization trajectory (NDBI: {m['NDBI']:.3f}), it will rapidly exacerbate the Urban Heat Island effect, pushing Heat Stress significantly above {m['Heat Stress (0-10)']:.1f}/10. \n\nThis unchecked expansion will inherently degrade the Livability Score ({m['Livability']:.1f}), fracture the city's Climate Resilience ({m['Climate Resilience']:.1f}/100), and systematically escalate local flooding risks."
+        heat_val = m['Heat Stress (0-10)'].iloc[0] if hasattr(m['Heat Stress (0-10)'], 'iloc') else m['Heat Stress (0-10)']
+        return f"If **{city_name}** continues its current urbanization trajectory (NDBI: {m['NDBI']:.3f}), it will rapidly exacerbate the Urban Heat Island effect, pushing Heat Stress significantly above {heat_val:.1f}/10. \n\nThis unchecked expansion will inherently degrade the Livability Score ({m['Livability']:.1f}), fracture the city's Climate Resilience ({m['Climate Resilience']:.1f}/100), and systematically escalate local flooding risks."
         
-    return f"*(Offline AI Simulation Mode)*\n\nThe environmental footprint of **{city_name}** consists of {m['Livability']:.1f} Livability, {int(m['AQI'])}/5 Air Quality, and {m['NDVI']:.3f} Vegetation density.\n\nBalancing these indicators through smart-city policies is crucial to mitigating its {m['Heat Stress (0-10)']:.1f}/10 spatial heat intensity."
+    return f"*(Offline AI Simulation Mode)*\n\nThe environmental footprint of **{city_name}** consists of {m['Livability']:.1f} Livability, {int(m['AQI'])}/5 Air Quality, and {m['NDVI']:.3f} Vegetation density.\n\nBalancing these indicators through smart-city policies is crucial to mitigating its {m['Heat Stress (0-10)'].iloc[0] if hasattr(m['Heat Stress (0-10)'], 'iloc') else m['Heat Stress (0-10)']:.1f}/10 spatial heat intensity."
 
 def render():
     st.title("💬 AI Urban Assistant")
@@ -162,7 +177,13 @@ def render():
                 if len(st.session_state.chat_history) == 1 else user_input
 
             with st.spinner("🛰️ Analyzing..."):
-                models_to_try = ["gemini-2.0-flash", "gemini-2.5-flash", "gemini-pro-latest", "gemini-flash-latest"]
+                models_to_try = [
+                    "gemini-1.5-flash", 
+                    "gemini-1.5-pro", 
+                    "gemini-2.0-flash", 
+                    "gemini-flash-latest", 
+                    "gemini-pro-latest"
+                ]
                 reply = None
                 last_err = None
                 for m_name in models_to_try:
